@@ -14,8 +14,8 @@ public class HubDisplay {
     private static final int DESC_WIDTH = 38;
 
     // Table formats for the Console UI
-    private static final String HUB_FORMAT    = "║   %-10s [%s] │   %-38s ║   %s%n";
-    private static final String MODULE_FORMAT = "║   %-10s [%s] │   %-38s ║%n";
+    private static final String HUB_FORMAT    = "║   %-10s [%s] │   %-38s   ║   %s%n";
+    private static final String MODULE_FORMAT = "║   %-10s [%s] │   %-38s   ║%n";
 
     private final Scanner scanner;
     private boolean isRunning;
@@ -53,10 +53,10 @@ public class HubDisplay {
         formatHubRow("Borrow", "3", "Inventory Borrowing & Return Portal","   //                  |                \\\\");
         formatHubRow("Modify", "4", "System Management & Undo Operations","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\\\");
         
-        System.out.println(S_LINE + "   \\\\                  `-'                //"); 
+        System.out.println(S_LINE + "     \\\\                  `-'                //"); 
         formatHubRow("Exit",   "0", "Terminate Session and Secure Data",  "   \\\\____...--~~~~~~~~~~~~~~~--...______//");
         
-        System.out.println(D_LINE + "         `~~~~~~~--..........--~~~~~~~'");
+        System.out.println(D_LINE + "           `~~~~~~~--..........--~~~~~~~'");
         System.out.print("» Hub Command: ");
     }
 
@@ -68,7 +68,7 @@ public class HubDisplay {
             case "1": showCreateModule(); break;
             case "4": showModifyModule(); break;
             case "0": 
-                System.out.println("[!] System shutting down. Goodbye!");
+                System.out.println("\n[!] System shutting down. Goodbye!\n");
                 isRunning = false; // Graceful exit from the loop
                 break;
             default: 
