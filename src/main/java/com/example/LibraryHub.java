@@ -111,7 +111,7 @@ public class LibraryHub {
 
     // --- Sub-Module Methods ---
 
-    private static void showBorrowSection() {
+private static void showBorrowSection() {
         List<Book> allBooks = LibraryDB.getInstance().getBooks();
         List<Book> availableBooks = new ArrayList<>();
 
@@ -119,14 +119,16 @@ public class LibraryHub {
         int displayIndex = 1;
         for (Book b : allBooks) {
             if (b.isAvailable()) {
-                System.out.format("%d. %s by %s [%s]%n", displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
+                // Eskisi gibi: Title by Author [ISBN]
+                System.out.format("%d. %s by %s [%s]%n", 
+                    displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
                 availableBooks.add(b);
             }
         }
 
         System.out.println(S_LINE);
         printRow("Borrow", "X", "Enter the list number (eg. 1, 2, 3...)");
-        endModule(); // Bu metod 'selection' değişkenini doldurur
+        endModule();
 
         try {
             int choice = Integer.parseInt(selection);
@@ -150,7 +152,9 @@ public class LibraryHub {
         int displayIndex = 1;
         for (Book b : allBooks) {
             if (!b.isAvailable()) {
-                System.out.format("%d. %s by %s [%s]%n", displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
+                // Eskisi gibi: Title by Author [ISBN]
+                System.out.format("%d. %s by %s [%s]%n", 
+                    displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
                 borrowedBooks.add(b);
             }
         }
@@ -172,6 +176,7 @@ public class LibraryHub {
             if (!selection.equals("0")) System.out.println("\n[!] Please enter a valid number.");
         }
     }
+
 private static void showBorrowStats() {
         printHeader("B O R R O W    I N S I G H T S");
         
@@ -200,11 +205,12 @@ private static void showBorrowStats() {
         endModule();
     }
 
-    private static void printAvailableBooks() {
+// Genel liste görünümü için yardımcı metodlar
+private static void printAvailableBooks() {
         printHeader("A V A I L A B L E    B O O K S");
         for (Book b : LibraryDB.getInstance().getBooks()) {
             if (b.isAvailable()) {
-                System.out.format("» %s by %s (%s) [%s]%n", b.getTitle(), b.getAuthor(), b.getPublicationYear(), b.getIsbn());
+                System.out.println("» " + b.getTitle() + " by " + b.getAuthor() + " [" + b.getIsbn() + "]");
             }
         }
     }
@@ -213,7 +219,7 @@ private static void showBorrowStats() {
         printHeader("B O R R O W E D    B O O K S");
         for (Book b : LibraryDB.getInstance().getBooks()) {
             if (!b.isAvailable()) {
-                System.out.format("» %s by %s (%s) [%s]%n", b.getTitle(), b.getAuthor(), b.getPublicationYear(), b.getIsbn());
+                System.out.println("» " + b.getTitle() + " by " + b.getAuthor() + " [" + b.getIsbn() + "]");
             }
         }
     }
