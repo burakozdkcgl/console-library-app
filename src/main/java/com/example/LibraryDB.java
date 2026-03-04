@@ -32,7 +32,7 @@ public class LibraryDB {
         this.books.add(book);
     }
 
-    // Getter for books list
+    // Getter for books
     public List<Book> getBooks() { return books; }
 
 }

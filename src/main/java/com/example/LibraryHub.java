@@ -85,12 +85,14 @@ public class LibraryHub {
         printRow("List","1","View All Books and Availability");
         printRow("Borrow","2","Borrow a Book");
         printRow("Return","3","Return a Borrowed Book");
+        printRow("Stats","4","View Most Popular Books");
         endModule();
         switch (selection) {
             case "0": break;
             case "1": showBorrowList(); break;
             case "2": showBorrowSection(); break;
             case "3": showReturnSection(); break;
+            case "4": showBorrowStats(); break;
             default: 
                 System.out.println("\n[!] Invalid Command. Returning to Hub.");
         }
@@ -169,6 +171,33 @@ public class LibraryHub {
         } catch (NumberFormatException e) {
             if (!selection.equals("0")) System.out.println("\n[!] Please enter a valid number.");
         }
+    }
+private static void showBorrowStats() {
+        printHeader("B O R R O W    I N S I G H T S");
+        
+        List<Book> statsList = new ArrayList<>(LibraryDB.getInstance().getBooks());
+        statsList.sort((b1, b2) -> Integer.compare(b2.getBorrowCount(), b1.getBorrowCount()));
+
+        // --- ÜST KISIM (KOLON BAŞLIKLARI) ---
+        // ║(1) + space(1) + 31 + space(1) + │(1) + space(1) + 17 + space(1) + │(1) + space(1) + 6 + space(2) + ║(1) = 65
+        System.out.format("║ %-31s │ %-17s │ %-6s  ║%n", "Book Title", "ISBN", "Count");
+        System.out.println(S_LINE);
+
+        // --- VERİ SATIRLARI ---
+        for (Book b : statsList) {
+            String title = b.getTitle();
+            if (title.length() > 31) {
+                title = title.substring(0, 28) + "...";
+            }
+
+            // Veri kısmında Count'u sağa yaslayıp (3 space + %-3d) toplam genişliği koruyoruz.
+            System.out.format("║ %-31s │ %-17s │   %-5d ║%n", 
+                title, 
+                b.getIsbn(), 
+                b.getBorrowCount());
+        }
+
+        endModule();
     }
 
     private static void printAvailableBooks() {
