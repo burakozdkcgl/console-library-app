@@ -48,16 +48,16 @@ public class LibraryHub {
     private static void showMenu() {
         System.out.println("\n" + STARS);
         printHeader("L I B R A R Y    H U B    C O N S O L E");
+        formatHubRow("View", "1", "List of All Books", "      __...--~~~~~-._    _.-~~~~--..._");
+        formatHubRow("Add", "2", "Add A New Book To Library!",     "    //                `V'              \\");
+        formatHubRow("Search", "3", "Access Global Search & Sort Engine", "   //                  |                \\");
+        formatHubRow("Borrow", "4", "Book Borrowing & Return Portal","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\");
+        formatHubRow("Edit", "5", "Modify Book Details","  \\                  `-'                //");
         
-        formatHubRow("New Book", "1", "Add A New Book To Library!",     "      __...--~~~~~-._    _.-~~~~--..._");
-        formatHubRow("Search", "2", "Access Global Search & Sort Engine", "    //                `V'              \\");
-        formatHubRow("Borrow", "3", "Book Borrowing & Return Portal","   //                  |                \\");
-        formatHubRow("Edit Book", "4", "Modify Book Details","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\");
+        System.out.println(S_LINE + "      \\____...--~~~~~~~~~~~~~~~--...______//"); 
+        formatHubRow("Exit",   "0", "Close The Application",  "        `~~~~~~~--..........--~~~~~~~'");
         
-        System.out.println(S_LINE + "     \\                  `-'                //"); 
-        formatHubRow("Exit",   "0", "Close The Application",  "   \\____...--~~~~~~~~~~~~~~~--...______//");
-        
-        System.out.println(D_LINE + "           `~~~~~~~--..........--~~~~~~~'");
+        System.out.println(D_LINE);
         System.out.print("» Hub Command: ");
     }
 
@@ -66,10 +66,11 @@ public class LibraryHub {
      */
     private static void routeCommand(String input) {
         switch (input) {
-            case "1": break;
+            case "1": showViewList(); break;
             case "2": break;
-            case "3": showBorrowModule(); break;
-            case "4": break;
+            case "3": break;
+            case "4": showBorrowModule(); break;
+            case "5": break;
             case "0": 
                 System.out.println("\n[!] System shutting down. Goodbye!\n");
                 isRunning = false; // Graceful exit from the loop
@@ -82,23 +83,21 @@ public class LibraryHub {
     // --- Sub-Module Methods ---
     private static void showBorrowModule() {
         startModule("B O O K    B O R R O W I N G");
-        printRow("List","1","View All Books and Availability");
-        printRow("Borrow","2","Borrow a Book");
-        printRow("Return","3","Return a Borrowed Book");
-        printRow("Stats","4","View Most Popular Books");
+        printRow("Borrow","1","Borrow a Book");
+        printRow("Return","2","Return a Borrowed Book");
+        printRow("Stats","3","View Most Popular Books");
         endModule();
         switch (selection) {
             case "0": break;
-            case "1": showBorrowList(); break;
-            case "2": showBorrowSection(); break;
-            case "3": showReturnSection(); break;
-            case "4": showBorrowStats(); break;
+            case "1": showBorrowSection(); break;
+            case "2": showReturnSection(); break;
+            case "3": showBorrowStats(); break;
             default: 
                 System.out.println("\n[!] Invalid Command. Returning to Hub.");
         }
     }
 
-    private static void showBorrowList() {
+    private static void showViewList() {
         printAvailableBooks();
         printBorrowedBooks();
         endModule();
@@ -233,7 +232,7 @@ private static void printAvailableBooks() {
 
     private static void endModule() {
         System.out.println(S_LINE);
-        printRow("Back", "0", "Return to the Primary Hub");
+        printRow("Back", "0", "Return to the Hub");
         System.out.println(D_LINE);
         System.out.print("» Selection: ");
         selection = scanner.nextLine();
