@@ -47,7 +47,7 @@ public class MockData {
             Book book = new Book();
             book.setTitle(booksData[i][0]);
             book.setAuthor(booksData[i][1]);
-            book.setPublicationYear(Integer.parseInt(booksData[i][2]));
+            book.setPublicationYear(booksData[i][2]);
             book.setIsbn(booksData[i][3]);
             book.setPublisher(booksData[i][4]);
 

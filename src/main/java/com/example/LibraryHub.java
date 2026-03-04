@@ -3,7 +3,7 @@ package com.example;
 import java.util.Scanner;
 
 /**
- * HubDisplay handles all User Interface logic and application flow.
+ * LibraryHub handles all User Interface logic and application flow.
  * It encapsulates the scanner and manages the main execution loop.
  */
 public class LibraryHub {
@@ -20,11 +20,12 @@ public class LibraryHub {
     private static Scanner scanner;
     private static boolean isRunning;
 
+    private static String selection; // For tracking user choices in sub-menus
+
     /**
      * The entry point for the UI flow. 
      * It keeps the application alive in a loop until the user chooses to exit.
      */
-
     public LibraryHub() {
         scanner = new Scanner(System.in);
         isRunning = true;
@@ -46,13 +47,13 @@ public class LibraryHub {
         System.out.println("\n" + STARS);
         printHeader("L I B R A R Y    H U B    C O N S O L E");
         
-        formatHubRow("Create", "1", "Initialize Book Creation Wizard",     "      __...--~~~~~-._    _.-~~~~--..._");
-        formatHubRow("Search", "2", "Access Global Search & Sort Engine", "    //                `V'              \\\\");
-        formatHubRow("Borrow", "3", "Inventory Borrowing & Return Portal","   //                  |                \\\\");
-        formatHubRow("Modify", "4", "System Management & Undo Operations","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\\\");
+        formatHubRow("New Book", "1", "Add A New Book To Library!",     "      __...--~~~~~-._    _.-~~~~--..._");
+        formatHubRow("Search", "2", "Access Global Search & Sort Engine", "    //                `V'              \\");
+        formatHubRow("Borrow", "3", "Book Borrowing & Return Portal","   //                  |                \\");
+        formatHubRow("Edit Book", "4", "Modify Book Details","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\");
         
-        System.out.println(S_LINE + "     \\\\                  `-'                //"); 
-        formatHubRow("Exit",   "0", "Terminate Session and Secure Data",  "   \\\\____...--~~~~~~~~~~~~~~~--...______//");
+        System.out.println(S_LINE + "     \\                  `-'                //"); 
+        formatHubRow("Exit",   "0", "Close The Application",  "   \\____...--~~~~~~~~~~~~~~~--...______//");
         
         System.out.println(D_LINE + "           `~~~~~~~--..........--~~~~~~~'");
         System.out.print("» Hub Command: ");
@@ -63,8 +64,10 @@ public class LibraryHub {
      */
     private static void routeCommand(String input) {
         switch (input) {
-            case "1": showCreateModule(); break;
-            case "4": showModifyModule(); break;
+            case "1": break;
+            case "2": break;
+            case "3": showBorrowModule(); break;
+            case "4": break;
             case "0": 
                 System.out.println("\n[!] System shutting down. Goodbye!\n");
                 isRunning = false; // Graceful exit from the loop
@@ -75,19 +78,20 @@ public class LibraryHub {
     }
 
     // --- Sub-Module Methods ---
-
-    private static void showCreateModule() {
-        startModule("B O O K    C R E A T I O N");
-        printRow("Details", "1", "Enter Title, Author, and ISBN");
-        printRow("Save",    "2", "Commit Book to the Database");
+    private static void showBorrowModule() {
+        startModule("B O O K    B O R R O W I N G");
+        printRow("List","1","View All Books and Availability");
+        printRow("Borrow","2","Borrow a Book");
+        printRow("Return","3","Return a Borrowed Book");
         endModule();
-    }
-
-    private static void showModifyModule() {
-        startModule("B O O K    M O D I F I C A T I O N");
-        printRow("Update",  "1", "Update details (author, year, etc.)");
-        printRow("Undo",    "2", "Revert the most recent modification");
-        endModule();
+        switch (selection) {
+            case "0": break;
+            case "1": break;
+            case "2": break;
+            case "3": break;
+            default: 
+                System.out.println("\n[!] Invalid Command. Returning to Hub.");
+        }
     }
 
     // --- Formatting Helpers ---
@@ -102,7 +106,7 @@ public class LibraryHub {
         printRow("Back", "0", "Return to the Primary Hub");
         System.out.println(D_LINE);
         System.out.print("» Selection: ");
-        scanner.nextLine(); // Wait for user input to go back
+        selection = scanner.nextLine();
     }
 
     private static void printRow(String label, String key, String desc) {

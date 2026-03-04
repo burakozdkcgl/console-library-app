@@ -8,6 +8,8 @@ import java.util.List;
  * It manages the list of all books, available categories, and system-wide tags.
  */
 public class LibraryDB {
+
+    // Singleton instance
     private static LibraryDB instance;
     
     private List<Book> books;
