@@ -1,17 +1,21 @@
 package com.example;
 
-import java.util.Scanner;
-
+/**
+ * Main serves as the entry point for the Library Management System.
+ * It initializes the database, populates it with mock data, and starts the UI.
+ */
 public class Main {
     public static void main(String[] args) {
 
         // Initialize the singleton database instance
-        LibraryDB database = LibraryDB.getInstance();
+        LibraryDB.getInstance();
 
-        // Display the console UI and start the application loop
-        Scanner scanner = new Scanner(System.in);
-        HubDisplay hub = new HubDisplay(scanner);
-        hub.display();
-        
+        // Populate the database with mock data for testing and demonstration
+        MockData.fillMockData();
+
+        // Start the console-based user interface
+        new LibraryHub();
+
     }
+
 }

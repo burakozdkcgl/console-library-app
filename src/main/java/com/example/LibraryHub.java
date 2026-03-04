@@ -6,7 +6,7 @@ import java.util.Scanner;
  * HubDisplay handles all User Interface logic and application flow.
  * It encapsulates the scanner and manages the main execution loop.
  */
-public class HubDisplay {
+public class LibraryHub {
     // UI Visual Constants
     private static final String D_LINE = "=================================================================";
     private static final String S_LINE = "-----------------------------------------------------------------";
@@ -17,23 +17,21 @@ public class HubDisplay {
     private static final String HUB_FORMAT    = "║   %-10s [%s] │   %-38s   ║   %s%n";
     private static final String MODULE_FORMAT = "║   %-10s [%s] │   %-38s   ║%n";
 
-    private final Scanner scanner;
-    private boolean isRunning;
-
-    /**
-     * Constructor initializes the Hub with a shared Scanner instance.
-     * @param scanner The system input scanner.
-     */
-    public HubDisplay(Scanner scanner) {
-        this.scanner = scanner;
-        this.isRunning = true;
-    }
+    private static Scanner scanner;
+    private static boolean isRunning;
 
     /**
      * The entry point for the UI flow. 
      * It keeps the application alive in a loop until the user chooses to exit.
      */
-    public void display() {
+
+    public LibraryHub() {
+        scanner = new Scanner(System.in);
+        isRunning = true;
+        display();
+    }
+
+    private static void display() {
         while (isRunning) {
             showMenu();
             String input = scanner.nextLine();
@@ -44,7 +42,7 @@ public class HubDisplay {
     /**
      * Renders the primary dashboard with ASCII art elements.
      */
-    private void showMenu() {
+    private static void showMenu() {
         System.out.println("\n" + STARS);
         printHeader("L I B R A R Y    H U B    C O N S O L E");
         
@@ -63,7 +61,7 @@ public class HubDisplay {
     /**
      * Internal router to direct the flow based on user input.
      */
-    private void routeCommand(String input) {
+    private static void routeCommand(String input) {
         switch (input) {
             case "1": showCreateModule(); break;
             case "4": showModifyModule(); break;
@@ -78,14 +76,14 @@ public class HubDisplay {
 
     // --- Sub-Module Methods ---
 
-    private void showCreateModule() {
+    private static void showCreateModule() {
         startModule("B O O K    C R E A T I O N");
         printRow("Details", "1", "Enter Title, Author, and ISBN");
         printRow("Save",    "2", "Commit Book to the Database");
         endModule();
     }
 
-    private void showModifyModule() {
+    private static void showModifyModule() {
         startModule("B O O K    M O D I F I C A T I O N");
         printRow("Update",  "1", "Update details (author, year, etc.)");
         printRow("Undo",    "2", "Revert the most recent modification");
@@ -94,12 +92,12 @@ public class HubDisplay {
 
     // --- Formatting Helpers ---
 
-    private void startModule(String title) {
+    private static void startModule(String title) {
         System.out.println();
         printHeader(title);
     }
 
-    private void endModule() {
+    private static void endModule() {
         System.out.println(S_LINE);
         printRow("Back", "0", "Return to the Primary Hub");
         System.out.println(D_LINE);
@@ -107,17 +105,17 @@ public class HubDisplay {
         scanner.nextLine(); // Wait for user input to go back
     }
 
-    private void printRow(String label, String key, String desc) {
+    private static void printRow(String label, String key, String desc) {
         String safeDesc = (desc.length() > DESC_WIDTH) ? desc.substring(0, DESC_WIDTH - 3) + "..." : desc;
         System.out.format(MODULE_FORMAT, label, key, safeDesc);
     }
 
-    private void formatHubRow(String label, String key, String desc, String art) {
+    private static void formatHubRow(String label, String key, String desc, String art) {
         String safeDesc = (desc.length() > DESC_WIDTH) ? desc.substring(0, DESC_WIDTH - 3) + "..." : desc;
         System.out.format(HUB_FORMAT, label, key, safeDesc, art);
     }
 
-    private void printHeader(String title) {
+    private static void printHeader(String title) {
         System.out.println(D_LINE);
         int padding = (D_LINE.length() - title.length()) / 2;
         System.out.println(" ".repeat(Math.max(0, padding)) + title);
