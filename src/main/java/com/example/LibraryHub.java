@@ -1,5 +1,7 @@
 package com.example;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -105,27 +107,67 @@ public class LibraryHub {
         }
     }
 
+    // --- Sub-Module Methods ---
+
     private static void showBorrowSection() {
-        printAvailableBooks();
+        List<Book> allBooks = LibraryDB.getInstance().getBooks();
+        List<Book> availableBooks = new ArrayList<>();
+
+        printHeader("A V A I L A B L E    B O O K S");
+        int displayIndex = 1;
+        for (Book b : allBooks) {
+            if (b.isAvailable()) {
+                System.out.format("%d. %s by %s [%s]%n", displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
+                availableBooks.add(b);
+            }
+        }
+
         System.out.println(S_LINE);
         printRow("Borrow", "X", "Enter the list number (eg. 1, 2, 3...)");
-        endModule();
-        switch (selection) {
-            case "0": break;
-            default: 
-                System.out.println("\n[!] Invalid Command. Returning to Hub.");
+        endModule(); // Bu metod 'selection' değişkenini doldurur
+
+        try {
+            int choice = Integer.parseInt(selection);
+            if (choice > 0 && choice <= availableBooks.size()) {
+                Book selectedBook = availableBooks.get(choice - 1);
+                selectedBook.borrow();
+                System.out.println("\n[+] Success: You have borrowed '" + selectedBook.getTitle() + "'.");
+            } else if (choice != 0) {
+                System.out.println("\n[!] Invalid selection.");
+            }
+        } catch (NumberFormatException e) {
+            if (!selection.equals("0")) System.out.println("\n[!] Please enter a valid number.");
         }
     }
 
     private static void showReturnSection() {
-        printBorrowedBooks();
+        List<Book> allBooks = LibraryDB.getInstance().getBooks();
+        List<Book> borrowedBooks = new ArrayList<>();
+
+        printHeader("B O R R O W E D    B O O K S");
+        int displayIndex = 1;
+        for (Book b : allBooks) {
+            if (!b.isAvailable()) {
+                System.out.format("%d. %s by %s [%s]%n", displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
+                borrowedBooks.add(b);
+            }
+        }
+
         System.out.println(S_LINE);
         printRow("Return", "X", "Enter the list number (eg. 1, 2, 3...)");
         endModule();
-        switch (selection) {
-            case "0": break;
-            default: 
-                System.out.println("\n[!] Invalid Command. Returning to Hub.");
+
+        try {
+            int choice = Integer.parseInt(selection);
+            if (choice > 0 && choice <= borrowedBooks.size()) {
+                Book selectedBook = borrowedBooks.get(choice - 1);
+                selectedBook.returnBook();
+                System.out.println("\n[+] Success: '" + selectedBook.getTitle() + "' has been returned.");
+            } else if (choice != 0) {
+                System.out.println("\n[!] Invalid selection.");
+            }
+        } catch (NumberFormatException e) {
+            if (!selection.equals("0")) System.out.println("\n[!] Please enter a valid number.");
         }
     }
 
