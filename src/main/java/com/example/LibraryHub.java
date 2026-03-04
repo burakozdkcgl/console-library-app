@@ -86,11 +86,64 @@ public class LibraryHub {
         endModule();
         switch (selection) {
             case "0": break;
-            case "1": break;
-            case "2": break;
-            case "3": break;
+            case "1": showBorrowList(); break;
+            case "2": showBorrowSection(); break;
+            case "3": showReturnSection(); break;
             default: 
                 System.out.println("\n[!] Invalid Command. Returning to Hub.");
+        }
+    }
+
+    private static void showBorrowList() {
+        printAvailableBooks();
+        printBorrowedBooks();
+        endModule();
+        switch (selection) {
+            case "0": break;
+            default: 
+                System.out.println("\n[!] Invalid Command. Returning to Hub.");
+        }
+    }
+
+    private static void showBorrowSection() {
+        printAvailableBooks();
+        System.out.println(S_LINE);
+        printRow("Borrow", "X", "Enter the list number (eg. 1, 2, 3...)");
+        endModule();
+        switch (selection) {
+            case "0": break;
+            default: 
+                System.out.println("\n[!] Invalid Command. Returning to Hub.");
+        }
+    }
+
+    private static void showReturnSection() {
+        printBorrowedBooks();
+        System.out.println(S_LINE);
+        printRow("Return", "X", "Enter the list number (eg. 1, 2, 3...)");
+        endModule();
+        switch (selection) {
+            case "0": break;
+            default: 
+                System.out.println("\n[!] Invalid Command. Returning to Hub.");
+        }
+    }
+
+    private static void printAvailableBooks() {
+        printHeader("A V A I L A B L E    B O O K S");
+        for (Book b : LibraryDB.getInstance().getBooks()) {
+            if (b.isAvailable()) {
+                System.out.format("» %s by %s (%s) [%s]%n", b.getTitle(), b.getAuthor(), b.getPublicationYear(), b.getIsbn());
+            }
+        }
+    }
+    
+    private static void printBorrowedBooks() {
+        printHeader("B O R R O W E D    B O O K S");
+        for (Book b : LibraryDB.getInstance().getBooks()) {
+            if (!b.isAvailable()) {
+                System.out.format("» %s by %s (%s) [%s]%n", b.getTitle(), b.getAuthor(), b.getPublicationYear(), b.getIsbn());
+            }
         }
     }
 

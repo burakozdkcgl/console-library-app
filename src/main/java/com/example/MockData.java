@@ -13,12 +13,11 @@ public class MockData {
         LibraryDB db = LibraryDB.getInstance();
 
         // 1. Populate Master Categories
-        String[] masterCategories = {"Fiction", "Science", "History", "Fantasy", "Biography", "Classic"};
-        for (String cat : masterCategories) db.addCategory(cat);
+        List<String> masterCategories = List.of("Fiction", "Science", "History", "Fantasy", "Biography", "Classic");
 
         // 2. Populate Master Tags
-        String[] masterTags = {"Bestseller", "Award-Winning", "Must-Read", "Vintage", "Educational"};
-        for (String tag : masterTags) db.addTag(tag);
+        List<String> masterTags = List.of("Bestseller", "Award-Winning", "Must-Read", "Vintage", "Educational");
+
 
         // 3. Create Books and Assign from Master Lists
         // Data: {Title, Author, Year, ISBN, Publisher}
@@ -40,8 +39,6 @@ public class MockData {
             {"The Art of War", "Sun Tzu", "-500", "9781590302255", "Shambhala"}
         };
 
-        List<String> cats = db.getCategories();
-        List<String> tags = db.getTags();
 
         for (int i = 0; i < booksData.length; i++) {
             Book book = new Book();
@@ -53,16 +50,39 @@ public class MockData {
 
             // Assign categories and tags from the central LibraryDB lists
             // Respecting the PDF limit: Max 3 categories and 3 tags 
-            book.addCategory(cats.get(i % cats.size())); 
-            book.addTag(tags.get(i % tags.size()));
+            book.addCategory(masterCategories.get(i % masterCategories.size())); 
+            book.addTag(masterTags.get(i % masterTags.size()));
             
             // Adding a second optional tag/category for variety
             if (i % 2 == 0) {
-                book.addCategory(cats.get((i + 1) % cats.size()));
-                book.addTag(tags.get((i + 1) % tags.size()));
+                book.addCategory(masterCategories.get((i + 1) % masterCategories.size()));
+                book.addTag(masterTags.get((i + 1) % masterTags.size()));
             }
 
             db.addBook(book);
+
+            
         }
+
+java.util.Random random = new java.util.Random();
+
+// 1. Önce her kitaba 0-20 arası rastgele bir borrow count atayalım
+for (Book b : db.getBooks()) {
+    int initialBorrowCount = random.nextInt(21); // 0 ile 20 arası (21 dahil değil)
+    // Book.java'daki borrowCount private olduğu için bir setter eklemelisin 
+    // veya borrow() metodunu döngüyle çağırmalısın. 
+    // En temizi Book.java'ya setBorrowCount eklemektir.
+    for(int i = 0; i < initialBorrowCount; i++) {
+        b.borrow(); // Önce rastgele borrow count oluşturuyoruz
+        b.returnBook(); // Geri iade ediyoruz ki hepsi müsait başlasın
+    }
+}
+
+// 2. Şimdi PDF gereksinimi için rastgele 4 tanesini gerçekten "Borrowed" yapalım
+java.util.Collections.shuffle(db.getBooks());
+for (int i = 0; i < 3; i++) {
+    db.getBooks().get(i).borrow(); // Bu 3 kitap sistemde ödünç alınmış görünecek
+}
+
     }
 }

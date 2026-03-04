@@ -12,14 +12,12 @@ public class LibraryDB {
     // Singleton instance
     private static LibraryDB instance;
     
+    // Data storage for books
     private List<Book> books;
-    private List<String> categories; // Master list of available categories
-    private List<String> tags;       // Master list of available tags
     
+    // Private constructor to prevent instantiation
     private LibraryDB() {
         this.books = new ArrayList<>();
-        this.categories = new ArrayList<>();
-        this.tags = new ArrayList<>();
     }
 
     public static synchronized LibraryDB getInstance() {
@@ -29,25 +27,12 @@ public class LibraryDB {
         return instance;
     }
 
-    // --- Book Management ---
+    // addBook method to add a book to the library
     public void addBook(Book book) {
         this.books.add(book);
     }
+
+    // Getter for books list
     public List<Book> getBooks() { return books; }
 
-    // --- Category Management ---
-    public void addCategory(String category) {
-        if (!categories.contains(category)) {
-            categories.add(category);
-        }
-    }
-    public List<String> getCategories() { return categories; }
-
-    // --- Tag Management ---
-    public void addTag(String tag) {
-        if (!tags.contains(tag)) {
-            tags.add(tag);
-        }
-    }
-    public List<String> getTags() { return tags; }
 }
