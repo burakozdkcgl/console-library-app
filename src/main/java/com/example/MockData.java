@@ -84,5 +84,8 @@ for (int i = 0; i < 3; i++) {
     db.getBooks().get(i).borrow(); // Bu 3 kitap sistemde ödünç alınmış görünecek
 }
 
+
+        masterCategories.forEach(db::addCategoryType); // Master kategorileri ekle
+        masterTags.forEach(db::addTagType); // Master tag'leri ekle
     }
 }

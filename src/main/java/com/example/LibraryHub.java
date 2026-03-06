@@ -45,8 +45,9 @@ public class LibraryHub {
         formatHubRow("Search", "3", "Access Global Search & Sort Engine", "   //                  |                \\");
         formatHubRow("Borrow", "4", "Book Borrowing & Return Portal","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\");
         formatHubRow("Edit", "5", "Modify Book Details","  \\                  `-'                //");
-        System.out.println(S_LINE + "      \\____...--~~~~~~~~~~~~~~~--...______//"); 
-        formatHubRow("Exit",   "0", "Close The Application",  "        `~~~~~~~--..........--~~~~~~~'");
+        formatHubRow("Manage", "6", "Category & Tag Management","   \\____...--~~~~~~~~~~~~~~~--...______//");
+        System.out.println(S_LINE + "          `~~~~~~~--..........--~~~~~~~'"); 
+        formatHubRow("Exit",   "0", "Close The Application",  "");
         System.out.println(D_LINE);
         System.out.print("» Hub Command: ");
     }
@@ -61,6 +62,7 @@ public class LibraryHub {
             case "3": showSearchModule(); break;
             case "4": showBorrowModule(); break;
             case "5": break;
+            case "6": break;
             case "0": 
                 System.out.println("\n[!] System shutting down. Goodbye!\n");
                 isRunning = false; // Graceful exit from the loop
@@ -79,9 +81,14 @@ private static void showSearchModule() {
     System.out.println("║ [3] ISBN");
     System.out.println("║ [4] Global (All Fields)");
     System.out.println(S_LINE);
+    System.out.println("║ [0] Back to Hub");
+    System.out.println(S_LINE);
     System.out.print("» Selection: "); // Sabit selection formatı
     String sChoice = scanner.nextLine();
     
+    if (sChoice.equals("0")) {
+        return; // Hub'a geri dön
+    }
     // Input Validation: Geçersiz seçimde direkt Hub'a döner
     if (!sChoice.matches("[1-4]")) {
         System.out.println("\n[!] Invalid Search Field. Returning to Hub...");
@@ -106,12 +113,17 @@ private static void showSearchModule() {
     // 3. Sıralama Düzeni Seçimi (Alt alta listeleme)
     System.out.println(S_LINE);
     System.out.println("║ Select Sort Order:");
-    System.out.println("║ [1] Title (Ascending A-Z)");
-    System.out.println("║ [2] Title (Descending Z-A)");
+    System.out.println("║ [1] Sort by Title (Ascending A-Z)");
+    System.out.println("║ [2] Sort by Title (Descending Z-A)");
+    System.out.println(S_LINE);
+    System.out.println("║ [0] Back to Hub");
     System.out.println(S_LINE);
     System.out.print("» Selection: "); // Sabit selection formatı
     String sortChoice = scanner.nextLine();
     
+    if (sortChoice.equals("0")) {
+        return; // Hub'a geri dön
+    }
     // Input Validation: Geçersiz seçimde direkt Hub'a döner
     if (!sortChoice.matches("[1-2]")) {
         System.out.println("\n[!] Invalid Sort Choice. Returning to Hub...");
@@ -156,15 +168,25 @@ private static void renderResultsTable(List<Book> results) {
     
     String resSelection = scanner.nextLine();
 
-    try {
-        int idx = Integer.parseInt(resSelection);
-        if (idx > 0 && idx <= results.size()) {
-            // Seçilen kitabı detay paneline gönder [cite: 32]
-            handleBookInteraction(results.get(idx - 1));
+        // Check if the user wants to go back before attempting to parse
+        if (resSelection.equals("0")) {
+            return;
         }
-    } catch (NumberFormatException e) {
-        // Hatalı girişte ana menüye döner
-    }
+
+        try {
+            int idx = Integer.parseInt(resSelection);
+            // VALIDATION: Check if the index is within the bounds of the results list
+            if (idx > 0 && idx <= results.size()) {
+                // Pass the selected book to the interaction handler
+                handleBookInteraction(results.get(idx - 1));
+            } else {
+                // FIX: Added explicit error message for out-of-bounds numbers
+                System.out.println("\n[!] Invalid selection: Index " + idx + " is not in the list.");
+            }
+        } catch (NumberFormatException e) {
+            // FIX: Added explicit error message for non-numeric inputs
+            System.out.println("\n[!] Invalid input: Please enter a valid index number.");
+        }
 }
 
     // --- Sub-Module Methods ---
