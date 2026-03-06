@@ -25,12 +25,6 @@ public class LibraryCore {
         this.sortStrategy = sortStrategy;
     }
 
-    /**
-     * Executes the search workflow:
-     * 1. Retrieves all books from the database.
-     * 2. Filters the books using the provided search strategy.
-     * 3. Sorts the filtered results using the provided sort strategy.
-     */
     public List<Book> executeSearch(String query) {
         // Access the singleton database to get the full list of books
         List<Book> allBooks = LibraryDB.getInstance().getBooks();
@@ -47,7 +41,6 @@ public class LibraryCore {
     }
 }
 
-// --- Search Strategy Implementations ---
 
 /**
  * Concrete strategy for searching books by their title.
@@ -94,6 +87,12 @@ class GlobalSearch implements SearchStrategy {
     }
 }
 
+/**
+ * The common interface for all search algorithms.
+ */
+interface SearchStrategy {
+    boolean matches(Book book, String query);
+}
 
 /**
  * Concrete strategy for sorting books by title in ascending order (A-Z).
@@ -118,25 +117,8 @@ class TitleDescSort implements SortStrategy {
 }
 
 /**
- * The common interface for all search algorithms.
- */
-interface SearchStrategy {
-    /**
-     * Determines if a book meets the specific search criteria.
-     * @param book The book object to check.
-     * @param query The search string.
-     * @return true if the book matches, false otherwise.
-     */
-    boolean matches(Book book, String query);
-}
-
-/**
  * The common interface for all sorting algorithms.
  */
 interface SortStrategy {
-    /**
-     * Reorders the provided list of books.
-     * @param books The list to be sorted.
-     */
     void sort(List<Book> books);
 }

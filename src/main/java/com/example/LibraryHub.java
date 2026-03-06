@@ -73,33 +73,169 @@ public class LibraryHub {
     }
 
 
-    private static void showAddBookModule() {
-        printHeader("A D D    A    N E W    B O O K");
-        System.out.println("║ Please enter the following details:");
+/**
+ * Orchestrates the book creation process using a confirmation loop.
+ * Provides specialized sub-menus for Category and Tag management.
+ */
+private static void showAddBookModule() {
+    printHeader("C R E A T E    N E W    B O O K");
+    
+    // Step 1: Basic Information
+    Book draftBook = new Book();
+    System.out.println("Step 1: Enter Primary Information");
+    System.out.println(S_LINE);
+    
+    System.out.print("» Title: ");
+    draftBook.setTitle(scanner.nextLine().trim());
+    System.out.print("» Author: ");
+    draftBook.setAuthor(scanner.nextLine().trim());
+    System.out.print("» ISBN: ");
+    draftBook.setIsbn(scanner.nextLine().trim());
+    System.out.print("» Publisher: ");
+    draftBook.setPublisher(scanner.nextLine().trim());
+    System.out.print("» Publication Year: ");
+    draftBook.setPublicationYear(scanner.nextLine().trim());
+
+    // Step 2: The Final Review & Sub-menu Loop
+    boolean isFinalized = false;
+    while (!isFinalized) {
+        renderDetailPanel(draftBook); 
+        
+        System.out.println("Step 2: Final Review & Customization");
+        System.out.println(S_LINE);
+        printRow("Confirm", "1", "SAVE book to permanent database");
+        printRow("Category", "2", "Manage categories (Add/Remove)");
+        printRow("Tags", "3", "Manage tags (Add/Remove)");
+        printRow("Cancel", "0", "Discard draft and return to Hub");
+        System.out.println(D_LINE);
+        System.out.print("» Selection: ");
+        
+        String action = scanner.nextLine();
+        switch (action) {
+            case "1":
+                LibraryDB.getInstance().addBook(draftBook);
+                System.out.println("\n[+] SUCCESS: '" + draftBook.getTitle() + "' added to catalog.");
+                isFinalized = true;
+                break;
+            case "2":
+                manageSubAssignments(draftBook, "Category");
+                break;
+            case "3":
+                manageSubAssignments(draftBook, "Tag");
+                break;
+            case "0":
+                System.out.println("\n[!] Creation cancelled.");
+                isFinalized = true;
+                break;
+            default:
+                System.out.println("\n[!] Invalid selection.");
+        }
+    }
+}
+
+/**
+ * Refined sub-menu for Category/Tag management.
+ * Fixed alignment issues and UI inconsistencies.
+ */
+/**
+ * Refined sub-menu with fixed spacing, dynamic plural titles, 
+ * and strictly aligned borders to prevent UI shifting.
+ */
+/**
+ * Refined sub-menu for Category/Tag management.
+ * Cleaned up unused variables and fixed the "CATEGORY S" header issue.
+ */
+private static void manageSubAssignments(Book draft, String type) {
+    boolean inSubMenu = true;
+    while (inSubMenu) {
+        // 1. Fixing the Header: No more "CATEGORY S"
+        // If type is "Category", it becomes "C A T E G O R I E S", else "T A G S"
+        String titleBase = type.equalsIgnoreCase("Category") ? "CATEGORIES" : type.toUpperCase() + "S";
+        StringBuilder spacedTitle = new StringBuilder();
+        for (char c : ("MANAGE " + titleBase).toCharArray()) {
+            spacedTitle.append(c).append(" ");
+        }
+        printHeader(spacedTitle.toString().trim());
+        
+        List<String> currentItems = type.equals("Category") ? draft.getCategories() : draft.getTags();
+        
+        // 2. Current Info Line with strict borders
+        String listStr = currentItems.isEmpty() ? "[None]" : currentItems.toString();
+        String infoLine = "» Current " + titleBase + ": " + listStr;
+        System.out.format("║ %-61s ║%n", infoLine); 
         System.out.println(S_LINE);
         
-        Book newBook = new Book();
+        // 3. Static actions - No unused backIndex variable
+        printRow("ADD", "1", "Add to selection");
         
-        System.out.print("» Title: ");
-        newBook.setTitle(scanner.nextLine().trim());
+        if (!currentItems.isEmpty()) {
+            printRow("REMOVE", "2", "Remove from selection");
+        }
         
-        System.out.print("» Author: ");
-        newBook.setAuthor(scanner.nextLine().trim());
+        printRow("BACK", "0", "Return to previous menu");
+        System.out.println(D_LINE);
+        System.out.print("» " + type + " Action: ");
         
-        System.out.print("» Publication Year: ");
-        newBook.setPublicationYear(scanner.nextLine().trim());
-        
-        System.out.print("» ISBN: ");
-        newBook.setIsbn(scanner.nextLine().trim());
-        
-        System.out.print("» Publisher: ");
-        newBook.setPublisher(scanner.nextLine().trim());
-
-        // Categories and Tags can be added in the Modify section after creation
-        LibraryDB.getInstance().addBook(newBook);
-        
-        System.out.println("\n[+] Success: '" + newBook.getTitle() + "' has been added to the library.");
+        String subInput = scanner.nextLine();
+        if (subInput.equals("0")) {
+            inSubMenu = false;
+        } else {
+            try {
+                int choice = Integer.parseInt(subInput);
+                if (choice == 1) {
+                    executeAssignment(draft, type, true);
+                } else if (choice == 2 && !currentItems.isEmpty()) {
+                    executeAssignment(draft, type, false);
+                } else {
+                    System.out.println("\n[!] Invalid selection.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\n[!] Please enter a numeric value.");
+            }
+        }
     }
+}
+
+/**
+ * Helper to perform the actual addition or removal from master lists.
+ */
+private static void executeAssignment(Book draft, String type, boolean isAdding) {
+    LibraryDB db = LibraryDB.getInstance();
+    List<String> masterList = type.equals("Category") ? db.getCategories() : db.getTags();
+    List<String> currentList = type.equals("Category") ? draft.getCategories() : draft.getTags();
+
+    if (isAdding) {
+        if (currentList.size() >= 3) {
+            System.out.println("[!] Limit reached (Max 3).");
+            return;
+        }
+        System.out.println("\n--- Select " + type + " to Add ---");
+        for (int i = 0; i < masterList.size(); i++) System.out.format("[%d] %s%n", (i+1), masterList.get(i));
+    } else {
+        System.out.println("\n--- Select " + type + " to Remove ---");
+        for (int i = 0; i < currentList.size(); i++) System.out.format("[%d] %s%n", (i+1), currentList.get(i));
+    }
+
+    System.out.print("» Index (0 to abort): ");
+    try {
+        int idx = Integer.parseInt(scanner.nextLine());
+        if (idx <= 0) return;
+
+        if (isAdding && idx <= masterList.size()) {
+            String selected = masterList.get(idx - 1);
+            if (!currentList.contains(selected)) {
+                if (type.equals("Category")) draft.addCategory(selected);
+                else draft.addTag(selected);
+            }
+        } else if (!isAdding && idx <= currentList.size()) {
+            currentList.remove(idx - 1);
+        }
+    } catch (Exception e) {
+        System.out.println("[!] Error processing selection.");
+    }
+}
+
+
 
 
 private static void showSearchModule() {
