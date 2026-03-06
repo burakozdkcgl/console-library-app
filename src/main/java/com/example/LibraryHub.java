@@ -58,7 +58,7 @@ public class LibraryHub {
     private static void routeCommand(String input) {
         switch (input) {
             case "1": showViewList(); break;
-            case "2": break;
+            case "2": showAddBookModule();break;
             case "3": showSearchModule(); break;
             case "4": showBorrowModule(); break;
             case "5": showModifyModule(); break;
@@ -71,6 +71,37 @@ public class LibraryHub {
                 System.out.println("\n[!] Invalid selection.");
         }
     }
+
+
+    private static void showAddBookModule() {
+        printHeader("A D D    A    N E W    B O O K");
+        System.out.println("║ Please enter the following details:");
+        System.out.println(S_LINE);
+        
+        Book newBook = new Book();
+        
+        System.out.print("» Title: ");
+        newBook.setTitle(scanner.nextLine().trim());
+        
+        System.out.print("» Author: ");
+        newBook.setAuthor(scanner.nextLine().trim());
+        
+        System.out.print("» Publication Year: ");
+        newBook.setPublicationYear(scanner.nextLine().trim());
+        
+        System.out.print("» ISBN: ");
+        newBook.setIsbn(scanner.nextLine().trim());
+        
+        System.out.print("» Publisher: ");
+        newBook.setPublisher(scanner.nextLine().trim());
+
+        // Categories and Tags can be added in the Modify section after creation
+        LibraryDB.getInstance().addBook(newBook);
+        
+        System.out.println("\n[+] Success: '" + newBook.getTitle() + "' has been added to the library.");
+    }
+
+
 private static void showSearchModule() {
     printHeader("S E A R C H    &    S O R T    E N G I N E");
     
