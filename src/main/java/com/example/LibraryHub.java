@@ -53,10 +53,8 @@ public class LibraryHub {
         formatHubRow("Search", "3", "Access Global Search & Sort Engine", "   //                  |                \\");
         formatHubRow("Borrow", "4", "Book Borrowing & Return Portal","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\");
         formatHubRow("Edit", "5", "Modify Book Details","  \\                  `-'                //");
-        
         System.out.println(S_LINE + "      \\____...--~~~~~~~~~~~~~~~--...______//"); 
         formatHubRow("Exit",   "0", "Close The Application",  "        `~~~~~~~--..........--~~~~~~~'");
-        
         System.out.println(D_LINE);
         System.out.print("» Hub Command: ");
     }
@@ -97,18 +95,100 @@ public class LibraryHub {
         }
     }
 
-    private static void showViewList() {
-        printAvailableBooks();
-        printBorrowedBooks();
-        endModule();
-        switch (selection) {
-            case "0": break;
-            default: 
-                System.out.println("\n[!] Invalid Command. Returning to Hub.");
+
+private static void handleBookInteraction(Book book) {
+    renderDetailPanel(book);
+
+    String actionLabel = book.isAvailable() ? "Borrow" : "Return";
+    String actionDesc  = book.isAvailable() ? "Borrow this book now" : "Return this book to library";
+
+    // Tablo bitti, hemen altına seçenekleri basıyoruz (Araya S_LINE koymadan)
+    printRow(actionLabel, "1", actionDesc);
+    printRow("Back", "0", "Return to Catalog");
+    System.out.println(D_LINE);
+    System.out.print("» Selection: ");
+    selection = scanner.nextLine();
+
+    if (selection.equals("1")) {
+        if (book.isAvailable()) {
+            book.borrow();
+            System.out.println("\n[+] Success: You have borrowed '" + book.getTitle() + "'.");
+        } else {
+            book.returnBook();
+            System.out.println("\n[+] Success: '" + book.getTitle() + "' has been returned.");
         }
     }
+}
 
-    // --- Sub-Module Methods ---
+private static void renderDetailPanel(Book book) {
+    System.out.println("\n" + STARS);
+    printHeader("B O O K    D E T A I L S");
+    
+    // Genişlik ayarı: 12 (label) + 3 (separator) + 46 (data) = 61 + kenarlar = 65
+    System.out.format("║  %-12s : %-46s ║%n", "Title", truncate(book.getTitle(), 46));
+    System.out.format("║  %-12s : %-46s ║%n", "Author", truncate(book.getAuthor(), 46));
+    System.out.format("║  %-12s : %-46s ║%n", "ISBN", book.getIsbn());
+    System.out.format("║  %-12s : %-46s ║%n", "Publisher", truncate(book.getPublisher(), 46));
+    System.out.format("║  %-12s : %-46s ║%n", "Year", book.getPublicationYear());
+    
+    if (!book.getCategories().isEmpty() || !book.getTags().isEmpty()) {
+        System.out.println(S_LINE);
+        if (!book.getCategories().isEmpty()) {
+            System.out.format("║  %-12s : %-46s ║%n", "Categories", truncate(String.join(", ", book.getCategories()), 46));
+        }
+        if (!book.getTags().isEmpty()) {
+            System.out.format("║  %-12s : %-46s ║%n", "Tags", truncate(String.join(", ", book.getTags()), 46));
+        }
+    }
+    
+    System.out.println(S_LINE);
+    String statusStr = book.isAvailable() ? "AVAILABLE" : "BORROWED (Count: " + book.getBorrowCount() + ")";
+    System.out.format("║  %-12s : %-46s ║%n", "Status", statusStr);
+    System.out.println(D_LINE);
+}
+
+// Tablo kaymasını önlemek için
+private static String truncate(String text, int width) {
+    if (text == null) return "";
+    return (text.length() > width) ? text.substring(0, width - 3) + "..." : text;
+}
+
+private static void showViewList() {
+    List<Book> allBooks = LibraryDB.getInstance().getBooks();
+    
+    printHeader("L I B R A R Y    C A T A L O G");
+    
+    System.out.format("   %-5s | %-12s | %-30s%n", "Index", "Status", "Title & Author");
+    System.out.println(S_LINE);
+
+    for (int i = 0; i < allBooks.size(); i++) {
+        Book b = allBooks.get(i);
+        String status = b.isAvailable() ? "[Available]" : "[Borrowed]";
+        System.out.format("   %-5d | %-12s | %s by %s%n", 
+            (i + 1), status, b.getTitle(), b.getAuthor());
+    }
+
+    System.out.println(S_LINE);
+    // Burayı tam istediğin açıklamaya çevirdik:
+    printRow("Details", "X", "Enter list number (eg 1, 2, 3..)");
+    
+    // endModule() yerine manuel bitiriyoruz ki Back[0] ve Selection bir arada olsun
+    printRow("Back", "0", "Return to the Hub");
+    System.out.println(D_LINE);
+    System.out.print("» Selection: ");
+    selection = scanner.nextLine();
+
+    try {
+        int choice = Integer.parseInt(selection);
+        if (choice > 0 && choice <= allBooks.size()) {
+            handleBookInteraction(allBooks.get(choice - 1));
+        } else if (choice != 0) {
+            System.out.println("\n[!] Invalid selection.");
+        }
+    } catch (NumberFormatException e) {
+        if (!selection.equals("0")) System.out.println("\n[!] Please enter a valid number.");
+    }
+}
 
 private static void showBorrowSection() {
         List<Book> allBooks = LibraryDB.getInstance().getBooks();
