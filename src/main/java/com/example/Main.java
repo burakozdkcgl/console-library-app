@@ -13,8 +13,8 @@ public class Main {
         // Populate the database with mock data for testing and demonstration
         MockData.fillMockData();
 
-        // Start the console-based user interface
-        new LibraryHub();
+        // Run the main UI loop of the application
+        LibraryHub.display();
 
     }
 

@@ -88,9 +88,4 @@ public class Book {
         }
     }
 
-    @Override
-    public String toString() {
-        return String.format("Book: %s | Author: %s | ISBN: %s | Status: %s", 
-                title, author, isbn, isAvailable ? "Available" : "Borrowed");
-    }
 }

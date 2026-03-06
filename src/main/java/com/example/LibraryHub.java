@@ -24,17 +24,9 @@ public class LibraryHub {
 
     private static String selection; // For tracking user choices in sub-menus
 
-    /**
-     * The entry point for the UI flow. 
-     * It keeps the application alive in a loop until the user chooses to exit.
-     */
-    public LibraryHub() {
+    public static void display() {
         scanner = new Scanner(System.in);
         isRunning = true;
-        display();
-    }
-
-    private static void display() {
         while (isRunning) {
             showMenu();
             String input = scanner.nextLine();
@@ -74,7 +66,7 @@ public class LibraryHub {
                 isRunning = false; // Graceful exit from the loop
                 break;
             default: 
-                System.out.println("\n[!] Invalid Command. Please try again.");
+                System.out.println("\n[!] Invalid selection.");
         }
     }
 
@@ -117,6 +109,10 @@ private static void handleBookInteraction(Book book) {
             book.returnBook();
             System.out.println("\n[+] Success: '" + book.getTitle() + "' has been returned.");
         }
+    } else if (selection.equals("0")) {
+        return;
+    } else {
+        System.out.println("\n[!] Invalid selection.");
     }
 }
 
