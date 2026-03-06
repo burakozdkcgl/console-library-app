@@ -58,7 +58,7 @@ public class LibraryHub {
         switch (input) {
             case "1": showViewList(); break;
             case "2": break;
-            case "3": break;
+            case "3": showSearchModule(); break;
             case "4": showBorrowModule(); break;
             case "5": break;
             case "0": 
@@ -69,6 +69,103 @@ public class LibraryHub {
                 System.out.println("\n[!] Invalid selection.");
         }
     }
+private static void showSearchModule() {
+    printHeader("S E A R C H    &    S O R T    E N G I N E");
+    
+    // 1. Arama Kriteri Seçimi (Alt alta listeleme)
+    System.out.println("║ Select Search Field:");
+    System.out.println("║ [1] Title");
+    System.out.println("║ [2] Author");
+    System.out.println("║ [3] ISBN");
+    System.out.println("║ [4] Global (All Fields)");
+    System.out.println(S_LINE);
+    System.out.print("» Selection: "); // Sabit selection formatı
+    String sChoice = scanner.nextLine();
+    
+    // Input Validation: Geçersiz seçimde direkt Hub'a döner
+    if (!sChoice.matches("[1-4]")) {
+        System.out.println("\n[!] Invalid Search Field. Returning to Hub...");
+        return;
+    }
+    
+    SearchStrategy searcher = switch (sChoice) {
+        case "1" -> new TitleSearch();
+        case "2" -> new AuthorSearch();
+        case "3" -> new ISBNSearch();
+        default  -> new GlobalSearch();
+    };
+
+    // 2. Arama Kelimesi [cite: 31]
+    System.out.print("» Enter Search Query: ");
+    String query = scanner.nextLine();
+    if (query.trim().isEmpty()) {
+        System.out.println("\n[!] Search query cannot be empty.");
+        return;
+    }
+
+    // 3. Sıralama Düzeni Seçimi (Alt alta listeleme)
+    System.out.println(S_LINE);
+    System.out.println("║ Select Sort Order:");
+    System.out.println("║ [1] Title (Ascending A-Z)");
+    System.out.println("║ [2] Title (Descending Z-A)");
+    System.out.println(S_LINE);
+    System.out.print("» Selection: "); // Sabit selection formatı
+    String sortChoice = scanner.nextLine();
+    
+    // Input Validation: Geçersiz seçimde direkt Hub'a döner
+    if (!sortChoice.matches("[1-2]")) {
+        System.out.println("\n[!] Invalid Sort Choice. Returning to Hub...");
+        return;
+    }
+    
+    SortStrategy sorter = sortChoice.equals("2") 
+        ? new TitleDescSort() 
+        : new TitleAscSort();
+
+    // 4. Stratejileri Core (Context) Yapısına Gönder ve Çalıştır [cite: 5, 8]
+    LibraryCore engine = new LibraryCore(searcher, sorter);
+    List<Book> results = engine.executeSearch(query);
+
+    // 5. Sonuçları Göster
+    if (results.isEmpty()) {
+        System.out.println("\n[!] No books found matching: " + query);
+    } else {
+        renderResultsTable(results);
+    }
+}
+
+private static void renderResultsTable(List<Book> results) {
+    printHeader("M A T C H I N G    R E S U L T S");
+    
+    // Tablo Başlığı
+    System.out.format("   %-5s | %-12s | %-30s%n", "Index", "Status", "Title & Author");
+    System.out.println(S_LINE);
+
+    for (int i = 0; i < results.size(); i++) {
+        Book b = results.get(i);
+        String status = b.isAvailable() ? "[Available]" : "[Borrowed]";
+        System.out.format("   %-5d | %-12s | %s by %s%n", 
+            (i + 1), status, truncate(b.getTitle(), 25), truncate(b.getAuthor(), 20));
+    }
+
+    System.out.println(S_LINE);
+    printRow("Details", "X", "Enter index number to view/borrow");
+    printRow("Back", "0", "Return to Hub");
+    System.out.println(D_LINE);
+    System.out.print("» Selection: ");
+    
+    String resSelection = scanner.nextLine();
+
+    try {
+        int idx = Integer.parseInt(resSelection);
+        if (idx > 0 && idx <= results.size()) {
+            // Seçilen kitabı detay paneline gönder [cite: 32]
+            handleBookInteraction(results.get(idx - 1));
+        }
+    } catch (NumberFormatException e) {
+        // Hatalı girişte ana menüye döner
+    }
+}
 
     // --- Sub-Module Methods ---
     private static void showBorrowModule() {
