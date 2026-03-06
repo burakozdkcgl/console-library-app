@@ -95,16 +95,16 @@ public class LibraryHub {
         }
     }
 
-
 private static void handleBookInteraction(Book book) {
     renderDetailPanel(book);
 
     String actionLabel = book.isAvailable() ? "Borrow" : "Return";
     String actionDesc  = book.isAvailable() ? "Borrow this book now" : "Return this book to library";
 
-    // Tablo bitti, hemen altına seçenekleri basıyoruz (Araya S_LINE koymadan)
+    // Seçenekleri basıyoruz
     printRow(actionLabel, "1", actionDesc);
     printRow("Back", "0", "Return to Catalog");
+    
     System.out.println(D_LINE);
     System.out.print("» Selection: ");
     selection = scanner.nextLine();
@@ -124,30 +124,33 @@ private static void renderDetailPanel(Book book) {
     System.out.println("\n" + STARS);
     printHeader("B O O K    D E T A I L S");
     
-    // Genişlik ayarı: 12 (label) + 3 (separator) + 46 (data) = 61 + kenarlar = 65
-    System.out.format("║  %-12s : %-46s ║%n", "Title", truncate(book.getTitle(), 46));
-    System.out.format("║  %-12s : %-46s ║%n", "Author", truncate(book.getAuthor(), 46));
-    System.out.format("║  %-12s : %-46s ║%n", "ISBN", book.getIsbn());
-    System.out.format("║  %-12s : %-46s ║%n", "Publisher", truncate(book.getPublisher(), 46));
-    System.out.format("║  %-12s : %-46s ║%n", "Year", book.getPublicationYear());
+    // Format: ║(1) + space(2) + Label(12) + space(1) + :(1) + space(1) + Veri(44) + space(2) + ║(1) = 65
+    System.out.format("║  %-12s : %-44s  ║%n", "Title", truncate(book.getTitle(), 44));
+    System.out.format("║  %-12s : %-44s  ║%n", "Author", truncate(book.getAuthor(), 44));
+    System.out.format("║  %-12s : %-44s  ║%n", "ISBN", book.getIsbn());
+    System.out.format("║  %-12s : %-44s  ║%n", "Publisher", truncate(book.getPublisher(), 44));
+    System.out.format("║  %-12s : %-44s  ║%n", "Year", book.getPublicationYear());
     
     if (!book.getCategories().isEmpty() || !book.getTags().isEmpty()) {
         System.out.println(S_LINE);
         if (!book.getCategories().isEmpty()) {
-            System.out.format("║  %-12s : %-46s ║%n", "Categories", truncate(String.join(", ", book.getCategories()), 46));
+            System.out.format("║  %-12s : %-44s  ║%n", "Categories", truncate(String.join(", ", book.getCategories()), 44));
         }
         if (!book.getTags().isEmpty()) {
-            System.out.format("║  %-12s : %-46s ║%n", "Tags", truncate(String.join(", ", book.getTags()), 46));
+            System.out.format("║  %-12s : %-44s  ║%n", "Tags", truncate(String.join(", ", book.getTags()), 44));
         }
     }
     
     System.out.println(S_LINE);
-    String statusStr = book.isAvailable() ? "AVAILABLE" : "BORROWED (Count: " + book.getBorrowCount() + ")";
-    System.out.format("║  %-12s : %-46s ║%n", "Status", statusStr);
+    
+    // Status ve Borrow Count birleştirildi
+    String statusStr = book.isAvailable() ? "AVAILABLE" : "BORROWED";
+    System.out.format("║  %-12s : %-44s  ║%n", "Status", statusStr);
+    System.out.format("║  %-12s : %-44d  ║%n", "Borrow Count", book.getBorrowCount()); // Borrow count eklendi
+    
     System.out.println(D_LINE);
 }
 
-// Tablo kaymasını önlemek için
 private static String truncate(String text, int width) {
     if (text == null) return "";
     return (text.length() > width) ? text.substring(0, width - 3) + "..." : text;
