@@ -44,7 +44,7 @@ public class LibraryHub {
         formatHubRow("Add", "2", "Add A New Book To Library!",     "    //                `V'              \\");
         formatHubRow("Search", "3", "Access Global Search & Sort Engine", "   //                  |                \\");
         formatHubRow("Borrow", "4", "Book Borrowing & Return Portal","  //__...--~~~~~~-.___ | _.-~~~~~~--...__\\");
-        formatHubRow("Edit", "5", "Modify Book Details","  \\                  `-'                //");
+        formatHubRow("Modify", "5", "Modify Book Details","  \\                  `-'                //");
         formatHubRow("Manage", "6", "Category & Tag Management","   \\____...--~~~~~~~~~~~~~~~--...______//");
         System.out.println(S_LINE + "          `~~~~~~~--..........--~~~~~~~'"); 
         formatHubRow("Exit",   "0", "Close The Application",  "");
@@ -61,7 +61,7 @@ public class LibraryHub {
             case "2": break;
             case "3": showSearchModule(); break;
             case "4": showBorrowModule(); break;
-            case "5": break;
+            case "5": showModifyModule(); break;
             case "6": showManagementModule(); break;
             case "0": 
                 System.out.println("\n[!] System shutting down. Goodbye!\n");
@@ -115,7 +115,6 @@ private static void showSearchModule() {
     System.out.println("║ Select Sort Order:");
     System.out.println("║ [1] Sort by Title (Ascending A-Z)");
     System.out.println("║ [2] Sort by Title (Descending Z-A)");
-    System.out.println(S_LINE);
     System.out.println("║ [0] Back to Hub");
     System.out.println(S_LINE);
     System.out.print("» Selection: "); // Sabit selection formatı
@@ -205,8 +204,6 @@ private static void showManagementModule() {
     }
 /**
      * Generic helper method to manage either Categories or Tags to avoid code duplication.
-     * Fixed the alignment of the right border to ensure visual consistency.
-     * @param type Either "Category" or "Tag"
      */
     private static void manageType(String type) {
         LibraryDB db = LibraryDB.getInstance();
@@ -492,6 +489,41 @@ private static void renderDetailPanel(Book book) {
         }
 
         endModule();
+    }
+
+    private static void showModifyModule() {
+        List<Book> allBooks = LibraryDB.getInstance().getBooks();
+        List<Book> modifiedBooks = new ArrayList<>();
+        printHeader("M O D I F Y    B O O K    D E T A I L S");
+
+        int displayIndex = 1;
+        for (Book b : allBooks) {
+            
+            System.out.format("%d. %s by %s [%s]%n", 
+            displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
+            modifiedBooks.add(b);
+            
+        }
+
+        System.out.println(S_LINE);
+        printRow("Modify", "X", "Enter the list number (eg. 1, 2, 3...)");
+        endModule();
+
+        try {
+            int choice = Integer.parseInt(selection);
+            if (choice > 0 && choice <= modifiedBooks.size()) {
+                Book selectedBook = modifiedBooks.get(choice - 1);
+                showModifyDetails(selectedBook);
+            } else if (choice != 0) {
+                System.out.println("\n[!] Invalid selection.");
+            }
+        } catch (NumberFormatException e) {
+            if (!selection.equals("0")) System.out.println("\n[!] Please enter a valid number.");
+        }
+    }
+
+    private static void showModifyDetails(Book book){
+
     }
 
     private static void startModule(String title) {
