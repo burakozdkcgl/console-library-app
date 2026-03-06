@@ -151,12 +151,12 @@ private static void renderDetailPanel(Book book) {
     System.out.println(D_LINE);
 }
 
-private static String truncate(String text, int width) {
-    if (text == null) return "";
-    return (text.length() > width) ? text.substring(0, width - 3) + "..." : text;
-}
+    private static String truncate(String text, int width) {
+        if (text == null) return "";
+        return (text.length() > width) ? text.substring(0, width - 3) + "..." : text;
+    }
 
-private static void showViewList() {
+    private static void showViewList() {
     List<Book> allBooks = LibraryDB.getInstance().getBooks();
     
     printHeader("L I B R A R Y    C A T A L O G");
@@ -191,9 +191,10 @@ private static void showViewList() {
     } catch (NumberFormatException e) {
         if (!selection.equals("0")) System.out.println("\n[!] Please enter a valid number.");
     }
-}
 
-private static void showBorrowSection() {
+    }
+
+    private static void showBorrowSection() {
         List<Book> allBooks = LibraryDB.getInstance().getBooks();
         List<Book> availableBooks = new ArrayList<>();
 
@@ -201,7 +202,6 @@ private static void showBorrowSection() {
         int displayIndex = 1;
         for (Book b : allBooks) {
             if (b.isAvailable()) {
-                // Eskisi gibi: Title by Author [ISBN]
                 System.out.format("%d. %s by %s [%s]%n", 
                     displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
                 availableBooks.add(b);
@@ -234,7 +234,6 @@ private static void showBorrowSection() {
         int displayIndex = 1;
         for (Book b : allBooks) {
             if (!b.isAvailable()) {
-                // Eskisi gibi: Title by Author [ISBN]
                 System.out.format("%d. %s by %s [%s]%n", 
                     displayIndex++, b.getTitle(), b.getAuthor(), b.getIsbn());
                 borrowedBooks.add(b);
@@ -259,25 +258,21 @@ private static void showBorrowSection() {
         }
     }
 
-private static void showBorrowStats() {
+    private static void showBorrowStats() {
         printHeader("B O R R O W    I N S I G H T S");
         
         List<Book> statsList = new ArrayList<>(LibraryDB.getInstance().getBooks());
         statsList.sort((b1, b2) -> Integer.compare(b2.getBorrowCount(), b1.getBorrowCount()));
 
-        // --- ÜST KISIM (KOLON BAŞLIKLARI) ---
-        // ║(1) + space(1) + 31 + space(1) + │(1) + space(1) + 17 + space(1) + │(1) + space(1) + 6 + space(2) + ║(1) = 65
         System.out.format("║ %-31s │ %-17s │ %-6s  ║%n", "Book Title", "ISBN", "Count");
         System.out.println(S_LINE);
 
-        // --- VERİ SATIRLARI ---
         for (Book b : statsList) {
             String title = b.getTitle();
             if (title.length() > 31) {
                 title = title.substring(0, 28) + "...";
             }
 
-            // Veri kısmında Count'u sağa yaslayıp (3 space + %-3d) toplam genişliği koruyoruz.
             System.out.format("║ %-31s │ %-17s │   %-5d ║%n", 
                 title, 
                 b.getIsbn(), 
@@ -286,27 +281,6 @@ private static void showBorrowStats() {
 
         endModule();
     }
-
-// Genel liste görünümü için yardımcı metodlar
-private static void printAvailableBooks() {
-        printHeader("A V A I L A B L E    B O O K S");
-        for (Book b : LibraryDB.getInstance().getBooks()) {
-            if (b.isAvailable()) {
-                System.out.println("» " + b.getTitle() + " by " + b.getAuthor() + " [" + b.getIsbn() + "]");
-            }
-        }
-    }
-    
-    private static void printBorrowedBooks() {
-        printHeader("B O R R O W E D    B O O K S");
-        for (Book b : LibraryDB.getInstance().getBooks()) {
-            if (!b.isAvailable()) {
-                System.out.println("» " + b.getTitle() + " by " + b.getAuthor() + " [" + b.getIsbn() + "]");
-            }
-        }
-    }
-
-    // --- Formatting Helpers ---
 
     private static void startModule(String title) {
         System.out.println();
