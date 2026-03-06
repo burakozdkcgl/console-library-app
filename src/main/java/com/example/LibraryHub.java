@@ -62,7 +62,7 @@ public class LibraryHub {
             case "3": showSearchModule(); break;
             case "4": showBorrowModule(); break;
             case "5": break;
-            case "6": break;
+            case "6": showManagementModule(); break;
             case "0": 
                 System.out.println("\n[!] System shutting down. Goodbye!\n");
                 isRunning = false; // Graceful exit from the loop
@@ -188,6 +188,103 @@ private static void renderResultsTable(List<Book> results) {
             System.out.println("\n[!] Invalid input: Please enter a valid index number.");
         }
 }
+
+private static void showManagementModule() {
+        startModule("M A N A G E M E N T    P A N E L");
+        printRow("Categories", "1", "Manage System Categories");
+        printRow("Tags", "2", "Manage System Tags");
+        endModule();
+
+        switch (selection) {
+            case "1": manageType("Category"); break;
+            case "2": manageType("Tag"); break;
+            case "0": break;
+            default: 
+                System.out.println("\n[!] Invalid selection.");
+        }
+    }
+/**
+     * Generic helper method to manage either Categories or Tags to avoid code duplication.
+     * Fixed the alignment of the right border to ensure visual consistency.
+     * @param type Either "Category" or "Tag"
+     */
+    private static void manageType(String type) {
+        LibraryDB db = LibraryDB.getInstance();
+        boolean managing = true;
+
+        while (managing) {
+            // 1. Dynamic Spaced Header: Converts "TAG" to "T A G"
+            String rawHeader = type.toUpperCase() + " MANAGEMENT";
+            StringBuilder spacedHeader = new StringBuilder();
+            for (char c : rawHeader.toCharArray()) {
+                spacedHeader.append(c).append(" ");
+            }
+            
+            // Now calling printHeader with the spaced-out string
+            printHeader(spacedHeader.toString().trim());
+            
+            // Access the appropriate list from the singleton database
+            List<String> items = type.equals("Category") ? db.getCategories() : db.getTags();
+
+            // Display existing items
+            if (items.isEmpty()) {
+                // Width adjusted to 61 characters to perfectly align with the border
+                System.out.format("║ %-61s ║%n", "No " + type.toLowerCase() + "s defined in the system.");
+            } else {
+                for (int i = 0; i < items.size(); i++) {
+                    // Increased padding to 57 to push the right border '║' to the edge
+                    System.out.format("║ [%d] %-57s ║%n", (i + 1), items.get(i));
+                }
+            }
+
+            System.out.println(S_LINE);
+            // Switched to numeric selections [1] and [2] for uniform UI
+            printRow("Add", "1", "Add a new " + type.toLowerCase());
+            printRow("Remove", "2", "Remove an existing " + type.toLowerCase());
+            printRow("Back", "0", "Return to Hub");
+            System.out.println(D_LINE);
+            System.out.print("» Selection: ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    // Process adding a new item
+                    System.out.print("» Enter new " + type.toLowerCase() + " name: ");
+                    String newName = scanner.nextLine().trim();
+                    if (!newName.isEmpty()) {
+                        if (type.equals("Category")) db.addCategoryType(newName);
+                        else db.addTagType(newName);
+                        System.out.println("\n[+] Success: " + type + " added.");
+                    }
+                    break;
+
+                case "2":
+                    // Process removal of an item by index
+                    System.out.print("» Enter index to remove: ");
+                    try {
+                        int idx = Integer.parseInt(scanner.nextLine());
+                        if (idx > 0 && idx <= items.size()) {
+                            String removed = items.get(idx - 1);
+                            if (type.equals("Category")) db.removeCategoryType(removed);
+                            else db.removeTagType(removed);
+                            System.out.println("\n[-] Success: " + type + " '" + removed + "' removed.");
+                        } else {
+                            System.out.println("\n[!] Invalid index selection.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("\n[!] Error: Please enter a valid numeric index.");
+                    }
+                    break;
+
+                case "0":
+                    managing = false;
+                    break;
+
+                default:
+                    System.out.println("\n[!] Invalid selection.");
+            }
+        }
+    }
 
     // --- Sub-Module Methods ---
     private static void showBorrowModule() {
