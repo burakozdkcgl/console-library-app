@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LibraryDB is a Singleton class that acts as the central data repository.
- * It manages the list of all books, available categories, and system-wide tags.
+ * LibraryDB, singleton class that acts as the central data repository.
  */
 public class LibraryDB {
 
@@ -17,19 +16,25 @@ public class LibraryDB {
     private List<String> categories;
     private List<String> tags;
     
-    // Private constructor to prevent instantiation
+    // Private constructor to prevent instantiation from outside the class
     private LibraryDB() {
         this.books = new ArrayList<>();
         this.categories = new ArrayList<>();
         this.tags = new ArrayList<>();
     }
 
+    // Method to get the singleton instance of LibraryDB and initialize it if it doesn't exist
     public static synchronized LibraryDB getInstance() {
         if (instance == null) {
             instance = new LibraryDB();
         }
         return instance;
     }
+
+    // Public getters and methods to manage books, categories, and tags of the instance
+    public List<Book> getBooks() { return books; }
+    public List<String> getCategories() { return categories; }
+    public List<String> getTags() { return tags; }
 
     public void addBook(Book book) {    this.books.add(book);    }
 
@@ -38,7 +43,4 @@ public class LibraryDB {
     public void removeCategoryType(String category) { this.categories.remove(category); }
     public void removeTagType(String tag) { this.tags.remove(tag); }
 
-    public List<Book> getBooks() { return books; }
-    public List<String> getCategories() { return categories; }
-    public List<String> getTags() { return tags; }
 }

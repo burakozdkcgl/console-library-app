@@ -133,18 +133,7 @@ private static void showAddBookModule() {
     }
 }
 
-/**
- * Refined sub-menu for Category/Tag management.
- * Fixed alignment issues and UI inconsistencies.
- */
-/**
- * Refined sub-menu with fixed spacing, dynamic plural titles, 
- * and strictly aligned borders to prevent UI shifting.
- */
-/**
- * Refined sub-menu for Category/Tag management.
- * Cleaned up unused variables and fixed the "CATEGORY S" header issue.
- */
+
 private static void manageSubAssignments(Book draft, String type) {
     boolean inSubMenu = true;
     while (inSubMenu) {
@@ -311,6 +300,7 @@ private static void showSearchModule() {
         renderResultsTable(results);
     }
 }
+
 
 private static void renderResultsTable(List<Book> results) {
     printHeader("M A T C H I N G    R E S U L T S");
