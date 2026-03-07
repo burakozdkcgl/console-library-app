@@ -137,8 +137,6 @@ private static void showAddBookModule() {
 private static void manageSubAssignments(Book draft, String type) {
     boolean inSubMenu = true;
     while (inSubMenu) {
-        // 1. Fixing the Header: No more "CATEGORY S"
-        // If type is "Category", it becomes "C A T E G O R I E S", else "T A G S"
         String titleBase = type.equalsIgnoreCase("Category") ? "CATEGORIES" : type.toUpperCase() + "S";
         StringBuilder spacedTitle = new StringBuilder();
         for (char c : ("MANAGE " + titleBase).toCharArray()) {
@@ -148,13 +146,11 @@ private static void manageSubAssignments(Book draft, String type) {
         
         List<String> currentItems = type.equals("Category") ? draft.getCategories() : draft.getTags();
         
-        // 2. Current Info Line with strict borders
         String listStr = currentItems.isEmpty() ? "[None]" : currentItems.toString();
         String infoLine = "» Current " + titleBase + ": " + listStr;
         System.out.format("║ %-61s ║%n", infoLine); 
         System.out.println(S_LINE);
         
-        // 3. Static actions - No unused backIndex variable
         printRow("ADD", "1", "Add to selection");
         
         if (!currentItems.isEmpty()) {
@@ -230,7 +226,7 @@ private static void executeAssignment(Book draft, String type, boolean isAdding)
 private static void showSearchModule() {
     printHeader("S E A R C H    &    S O R T    E N G I N E");
     
-    // 1. Arama Kriteri Seçimi (Alt alta listeleme)
+
     System.out.println("║ Select Search Field:");
     System.out.println("║ [1] Title");
     System.out.println("║ [2] Author");
@@ -239,13 +235,13 @@ private static void showSearchModule() {
     System.out.println(S_LINE);
     System.out.println("║ [0] Back to Hub");
     System.out.println(S_LINE);
-    System.out.print("» Selection: "); // Sabit selection formatı
+    System.out.print("» Selection: "); 
     String sChoice = scanner.nextLine();
     
     if (sChoice.equals("0")) {
-        return; // Hub'a geri dön
+        return; 
     }
-    // Input Validation: Geçersiz seçimde direkt Hub'a döner
+
     if (!sChoice.matches("[1-4]")) {
         System.out.println("\n[!] Invalid Search Field. Returning to Hub...");
         return;
@@ -258,7 +254,7 @@ private static void showSearchModule() {
         default  -> new GlobalSearch();
     };
 
-    // 2. Arama Kelimesi [cite: 31]
+
     System.out.print("» Enter Search Query: ");
     String query = scanner.nextLine();
     if (query.trim().isEmpty()) {
@@ -266,14 +262,13 @@ private static void showSearchModule() {
         return;
     }
 
-    // 3. Sıralama Düzeni Seçimi (Alt alta listeleme)
     System.out.println(S_LINE);
     System.out.println("║ Select Sort Order:");
     System.out.println("║ [1] Sort by Title (Ascending A-Z)");
     System.out.println("║ [2] Sort by Title (Descending Z-A)");
     System.out.println("║ [0] Back to Hub");
     System.out.println(S_LINE);
-    System.out.print("» Selection: "); // Sabit selection formatı
+    System.out.print("» Selection: "); 
     String sortChoice = scanner.nextLine();
     
     if (sortChoice.equals("0")) {
@@ -679,12 +674,11 @@ private static void renderDetailPanel(Book book) {
         }
     }
 
-// LibraryHub.java içindeki showModifyDetails ve alt metodları
 
 private static void showModifyDetails(Book book) {
     boolean modifying = true;
     while (modifying) {
-        renderDetailPanel(book); // Kitabın güncel halini göster
+        renderDetailPanel(book);
         printHeader("M O D I F Y    O P T I O N S");
         
         printRow("Details", "1", "Update Author, ISBN, Year, etc.");

@@ -89,9 +89,6 @@ public class Book {
         }
     }
 
-
-
-    // Her kitaba özel undo yığını
     private Stack<Command> history = new Stack<>();
 
     public void addStep(Command cmd) {
@@ -100,7 +97,7 @@ public class Book {
 
     public boolean undoLastStep() {
         if (!history.isEmpty()) {
-            history.pop().undo(); // Son komutu yığından çıkar ve geri al
+            history.pop().undo();
             return true;
         }
         return false;
