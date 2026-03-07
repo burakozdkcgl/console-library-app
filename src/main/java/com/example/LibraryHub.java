@@ -679,9 +679,88 @@ private static void renderDetailPanel(Book book) {
         }
     }
 
-    private static void showModifyDetails(Book book){
+// LibraryHub.java içindeki showModifyDetails ve alt metodları
 
+private static void showModifyDetails(Book book) {
+    boolean modifying = true;
+    while (modifying) {
+        renderDetailPanel(book); // Kitabın güncel halini göster
+        printHeader("M O D I F Y    O P T I O N S");
+        
+        printRow("Details", "1", "Update Author, ISBN, Year, etc.");
+        printRow("Lists", "2", "Manage Categories & Tags");
+        printRow("Undo", "9", "Undo last change for THIS book"); // 
+        printRow("Back", "0", "Finish modifications");
+        System.out.println(D_LINE);
+        System.out.print("» Selection: ");
+        
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "1" -> modifyTextFields(book);
+            case "2" -> modifyLists(book);
+            case "9" -> {
+                if (book.undoLastStep()) System.out.println("\n[+] Success: Last change reverted.");
+                else System.out.println("\n[!] Error: No history found for this book.");
+            }
+            case "0" -> modifying = false;
+            default -> System.out.println("\n[!] Invalid selection.");
+        }
     }
+}
+
+private static void modifyTextFields(Book b) {
+    System.out.println("\n--- Select Field to Update ---");
+    System.out.println("[1] Title  [2] Author  [3] ISBN  [4] Year  [5] Publisher");
+    System.out.print("» Field: ");
+    String fieldChoice = scanner.nextLine();
+    
+    String fieldName = switch(fieldChoice) {
+        case "1" -> "Title"; case "2" -> "Author"; case "3" -> "ISBN"; 
+        case "4" -> "Year";  case "5" -> "Publisher"; default -> null;
+    };
+
+    if (fieldName != null) {
+        System.out.print("» Enter new " + fieldName + ": ");
+        String newVal = scanner.nextLine().trim();
+        LibraryCore.executeCommand(b, new UpdateFieldCommand(b, fieldName, newVal));
+        System.out.println("[+] Field updated.");
+    }
+}
+
+private static void modifyLists(Book b) {
+    System.out.println("\n[1] Manage Categories  [2] Manage Tags");
+    System.out.print("» Selection: ");
+    String choice = scanner.nextLine();
+    
+    String type = choice.equals("1") ? "Category" : "Tag";
+    List<String> currentList = choice.equals("1") ? b.getCategories() : b.getTags();
+    List<String> masterList = choice.equals("1") ? LibraryDB.getInstance().getCategories() : LibraryDB.getInstance().getTags();
+
+    System.out.println("\n[1] Add from System  [2] Remove from Book");
+    System.out.print("» Action: ");
+    String action = scanner.nextLine();
+
+    if (action.equals("1")) {
+        if (currentList.size() >= 3) { System.out.println("[!] Limit reached (Max 3)."); return; }
+        for (int i = 0; i < masterList.size(); i++) System.out.format("[%d] %s%n", (i+1), masterList.get(i));
+        System.out.print("» Index: ");
+        try {
+            int idx = Integer.parseInt(scanner.nextLine());
+            String item = masterList.get(idx - 1);
+            if (!currentList.contains(item)) {
+                LibraryCore.executeCommand(b, new ListModifyCommand(currentList, item, true));
+            }
+        } catch (Exception e) { System.out.println("[!] Selection error."); }
+    } else if (action.equals("2")) {
+        if (currentList.isEmpty()) { System.out.println("[!] No items to remove."); return; }
+        for (int i = 0; i < currentList.size(); i++) System.out.format("[%d] %s%n", (i+1), currentList.get(i));
+        System.out.print("» Index: ");
+        try {
+            int idx = Integer.parseInt(scanner.nextLine());
+            LibraryCore.executeCommand(b, new ListModifyCommand(currentList, currentList.get(idx - 1), false));
+        } catch (Exception e) { System.out.println("[!] Selection error."); }
+    }
+}
 
     private static void startModule(String title) {
         System.out.println();

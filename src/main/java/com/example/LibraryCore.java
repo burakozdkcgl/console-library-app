@@ -39,7 +39,14 @@ public class LibraryCore {
         
         return filtered;
     }
+
+    // LibraryCore sınıfı içindeki metod:
+    public static void executeCommand(Book book, Command cmd) {
+        cmd.execute();
+        book.addStep(cmd); // Komutu kitabın kendi geçmişine kaydet
+    }
 }
+
 
 
 /**
@@ -122,3 +129,77 @@ class TitleDescSort implements SortStrategy {
 interface SortStrategy {
     void sort(List<Book> books);
 }
+
+
+
+/**
+ * Command Pattern arayüzü [cite: 5]
+ */
+interface Command {
+    void execute();
+    void undo();
+}
+
+/**
+ * Metin alanlarını (Title, Author vb.) güncellemek için komut sınıfı
+ */
+class UpdateFieldCommand implements Command {
+    private Book book;
+    private String fieldName, oldValue, newValue;
+
+    public UpdateFieldCommand(Book book, String fieldName, String newValue) {
+        this.book = book;
+        this.fieldName = fieldName;
+        this.newValue = newValue;
+    }
+
+    @Override
+    public void execute() {
+        switch (fieldName) {
+            case "Title" -> { oldValue = book.getTitle(); book.setTitle(newValue); }
+            case "Author" -> { oldValue = book.getAuthor(); book.setAuthor(newValue); }
+            case "ISBN" -> { oldValue = book.getIsbn(); book.setIsbn(newValue); }
+            case "Year" -> { oldValue = book.getPublicationYear(); book.setPublicationYear(newValue); }
+            case "Publisher" -> { oldValue = book.getPublisher(); book.setPublisher(newValue); }
+        }
+    }
+
+    @Override
+    public void undo() {
+        switch (fieldName) {
+            case "Title" -> book.setTitle(oldValue);
+            case "Author" -> book.setAuthor(oldValue);
+            case "ISBN" -> book.setIsbn(oldValue);
+            case "Year" -> book.setPublicationYear(oldValue);
+            case "Publisher" -> book.setPublisher(oldValue);
+        }
+    }
+}
+
+/**
+ * Kategori ve Tag listelerini güncellemek için komut sınıfı [cite: 17]
+ */
+class ListModifyCommand implements Command {
+    private List<String> targetList;
+    private String item;
+    private boolean isAddition;
+
+    public ListModifyCommand(List<String> list, String item, boolean isAddition) {
+        this.targetList = list;
+        this.item = item;
+        this.isAddition = isAddition;
+    }
+
+    @Override
+    public void execute() {
+        if (isAddition) targetList.add(item);
+        else targetList.remove(item);
+    }
+
+    @Override
+    public void undo() {
+        if (isAddition) targetList.remove(item);
+        else targetList.add(item);
+    }
+}
+

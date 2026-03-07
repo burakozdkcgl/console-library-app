@@ -2,6 +2,7 @@ package com.example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Represents a book in the library system.
@@ -86,6 +87,23 @@ public class Book {
         if (!isAvailable) {
             isAvailable = true;
         }
+    }
+
+
+
+    // Her kitaba özel undo yığını
+    private Stack<Command> history = new Stack<>();
+
+    public void addStep(Command cmd) {
+        history.push(cmd);
+    }
+
+    public boolean undoLastStep() {
+        if (!history.isEmpty()) {
+            history.pop().undo(); // Son komutu yığından çıkar ve geri al
+            return true;
+        }
+        return false;
     }
 
 }
